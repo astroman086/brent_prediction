@@ -2,14 +2,15 @@ name: Brent Crude Predictor
 
 on:
   schedule:
-    - cron: '*/10 * * * *'  # Runs every 10 minutes
-  workflow_dispatch:        # Allows you to click 'Run workflow' manually anytime
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write  # <-- This fixes Exit Code 128 permissions error
 
 jobs:
   run-predictor:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write       # Required so the bot can commit the updated CSV back to your repo
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

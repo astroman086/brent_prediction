@@ -106,7 +106,6 @@ class BrentCrudePredictorTask:
             pred = model.predict(X_lt[-1].reshape(1, -1))[0]
             results[horizon] = (round(float(pred), 2), round(float(((pred - current_price) / current_price) * 100), 2))
 
-        # Save to CSV log with a blank row space at the end of each run
         rows = []
         for horizon, (pred_price, pct) in results.items():
             rows.append({
@@ -127,11 +126,10 @@ class BrentCrudePredictorTask:
         else:
             df_new_log.to_csv(self.log_file, mode='w', header=True, index=False)
             
-        # Append an empty newline to leave a visual gap between prediction batches
         with open(self.log_file, 'a') as f:
             f.write('\n')
 
-        print(f"[+] Saved new predictions and added spacing to {self.log_file}")
+        print(f"[+] Saved new predictions to {self.log_file}")
 
 
 if __name__ == "__main__":

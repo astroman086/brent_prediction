@@ -32,6 +32,6 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git pull --rebase origin main
           git add brent_predictions_log.csv
+          git pull --rebase origin main
           git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update prediction logs [skip ci]" && git push origin main)

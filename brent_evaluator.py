@@ -5,17 +5,18 @@ import yfinance as yf
 
 
 class BrentEvaluatorTask:
-    def __init__(self, log_file="brent_predictions_log.csv"):
-        self.log_file = log_file
+    def __init__(self, input_log="brent_predictions_log.csv", output_eval="brent_evaluation_results.csv"):
+        self.input_log = input_log
+        self.output_eval = output_eval
 
     def run(self):
-        if not os.path.exists(self.log_file):
-            print(f"[-] No log file found.")
+        if not os.path.exists(self.input_log):
+            print(f"[-] Input log file {self.input_log} not found.")
             return
 
-        df_log = pd.read_csv(self.log_file).dropna(how='all')
+        df_log = pd.read_csv(self.input_log).dropna(how='all')
         if df_log.empty:
-            print(f"[-] Log file is empty.")
+            print(f"[-] Input log file is empty.")
             return
 
         print(f"--- EVALUATION RUN: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} ---")
@@ -41,7 +42,7 @@ class BrentEvaluatorTask:
         updated_count = 0
         for idx, row in df_log.iterrows():
             if not pd.isna(row['Actual_Price']):
-                continue  # Already evaluated
+                continue  # Already evaluated in a previous run
                 
             log_time = pd.to_datetime(row['Log_Timestamp'])
             horizon = row['Horizon']
@@ -56,13 +57,12 @@ class BrentEvaluatorTask:
                 updated_count += 1
                 print(f"[+] Evaluated {horizon} logged at {log_time}: Actual=${actual_price:.2f} (Error: {error_pct:+.2f}%)")
 
-        if updated_count > 0:
-            df_log.to_csv(self.log_file, index=False)
-            with open(self.log_file, 'a') as f:
-                f.write('\n')
-            print(f"[+] Successfully updated {updated_count} matured prediction(s).")
-        else:
-            print("[*] No newly matured predictions found.")
+        # Save results to a brand new separate file without touching git write permissions
+        df_log.to_csv(self.output_eval, index=False)
+        with open(self.output_eval, 'a') as f:
+            f.write('\n')
+            
+        print(f"[+] Successfully generated evaluation report at {self.output_eval} ({updated_count} newly graded).")
 
 
 if __name__ == "__main__":

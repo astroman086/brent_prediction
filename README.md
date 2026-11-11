@@ -26,3 +26,17 @@ your-repo-name/
     └── workflows/
         ├── predict.yml       # Cron schedule for runner (Every 10 minutes)
         └── evaluate.yml      # Cron schedule for evaluator (Every hour)
+
+
+📊 Tracked Horizons & Deltas
+Horizon    Window    Type     Data Source Target Lag
+5m – 24h Short-Term  Hourly   (BZ=F, 60d)   1 to 288 hourly steps, 5d – 1y Long-Term, Daily (BZ=F, Max) 5 to 252 trading days
+
+🛠️ Local Installation & Usage
+1. PrerequisitesEnsure you have Python 3.10+ installed.
+2. Install DependenciesBashpip install numpy pandas yfinance feedparser nltk scikit-learn
+3. Run LocallyGenerate a new prediction
+run: python brent_predictor.py
+
+Evaluate and grade pending predictions
+run: python brent_evaluator.py

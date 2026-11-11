@@ -1,17 +1,37 @@
-name: Brent Crude Evaluator
+name: Brent Crude Predictor
 
 on:
   schedule:
-    - cron: '0 * * * *'
+    - cron: '*/10 * * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  run-evaluator:
+  run-predictor:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-      - run: pip install numpy pandas yfinance feedparser nltk scikit-learn
-      - run: python brent_evaluator.py
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy pandas yfinance feedparser nltk scikit-learn
+
+      - name: Run predictor script
+        run: python brent_predictor.py
+
+      - name: Commit and push updated CSV log
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main
+          git add brent_predictions_log.csv
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update prediction logs [skip ci]" && git push origin main)
